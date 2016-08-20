@@ -526,7 +526,9 @@ def lmfit2(record):
         pwr_fit = outs2[ind].params['power'].value
         wid_fit = outs2[ind].params['width'].value
         vel_fit = outs2[ind].params['velocity'].value
-        
+
+        # TO DO, implement errors that compare relative chi2 of the
+        # multiple minima found. Just like in the C version.
         pwr_e = outs2[ind].params['power'].stderr
         wid_e = outs2[ind].params['width'].stderr
         vel_e = outs2[ind].params['velocity'].stderr
