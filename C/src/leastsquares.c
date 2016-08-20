@@ -116,7 +116,7 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
                     example: confidence == 1 corresponds to 1-sigma confidence interval */
     /* model - selects either exponential envelope (0) or gaussian envelope (1) */
 
-    const int num_init_vel = 30;  /* Number of initial velocities to try */
+    const static int num_init_vel = 30;  /* Number of initial velocities to try */
     int i;
     double min_chi;
     double pwr_fit=0, wid_fit=0, vel_fit=0;
@@ -134,6 +134,16 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
 
     double nyquist_velocity = lambda/(4.0 * (double)(mpinc) * 1.e-6);
     double v_step = (nyquist_velocity/2.0 - (-nyquist_velocity/2.0)) / ((double)(num_init_vel) - 1);  
+
+    double chi2s[num_init_vel];
+    double pows[num_init_vel];
+    double wids[num_init_vel];
+    double vels[num_init_vel];
+    double pows_e[num_init_vel];
+    double wids_e[num_init_vel];
+    double vels_e[num_init_vel];
+
+    int delta_chi = confidence*confidence;
 
     /* set up data array */
     num_lags = llist_size(data);
@@ -180,22 +190,37 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
     params_info[2].limits[1]  = nyquist_velocity/2.;
 
     /* CONFIGURE LMFIT */
-    config.maxiter = 200;
+    config.maxiter = 2000;
     config.ftol = .0001;
     config.gtol = .0001;
     config.nofinitecheck=0;
 
-    /* Starting guess */
-    best_fit_params[0] = 10000.0;
-    best_fit_params[1] = 200.0;
-
     min_chi = 10e200;
+    int save_status;
     for (i=0;i<num_init_vel;i++){
+        /* Starting guess */
+        best_fit_params[0] = 10000.0;
+        best_fit_params[1] = 200.0;
         best_fit_params[2] = -nyquist_velocity/2. + i*v_step;
 
         /*run a single-component fit*/
         status = mpfit(exp_acf_model,num_lags*2,3,best_fit_params,params_info,&config,(void *)lmdata,&result);
 
+        if (status == 5){
+            fprintf(stderr,"Maximum Iterations Reached: %d\n",status);
+        }else if ((status > 5)){
+            fprintf(stderr, "Tolerance Problem: %d\n",status);
+        }else if ((status < 1)){
+            fprintf(stderr, "Other Error: %d\n",status);
+        }
+
+        chi2s[i] = result.bestnorm;
+        pows[i] = best_fit_params[0];
+        wids[i] = best_fit_params[1];
+        vels[i] = best_fit_params[2];
+        pows_e[i] = result.xerror[0];
+        wids_e[i] = result.xerror[1];
+        vels_e[i] = result.xerror[2];
         /* TO DO */
         /* Check status that mpfit returns to see if fit is worth keeping */
         /* Look at mpfit.h for status codes, basically if 0 < status <= 4 is good */
@@ -207,9 +232,28 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
             wid_fit = best_fit_params[1];
             vel_fit = best_fit_params[2];
 
-            pwr_fit_e = result.xerror[0];
-            wid_fit_e = result.xerror[1];
-            vel_fit_e = result.xerror[2];
+            pwr_fit_e = confidence*result.xerror[0];
+            wid_fit_e = confidence*result.xerror[1];
+            vel_fit_e = confidence*result.xerror[2];
+            save_status = status;
+        }
+    }
+
+    /* Check for deviation from Gaussian of fitted parameter errors */
+    /* Local minima may be within delta_chi significance of global minimum */
+    for (i=0;i<num_init_vel;i++){
+        if (chi2s[i] <= min_chi + delta_chi){
+            /* Make sure we keep the largest error bar. There may be multiple
+               local minima below min_chi + delta_chi */
+            if (pwr_fit_e < fabs(pwr_fit - pows[i])){
+                pwr_fit_e = fabs(pwr_fit - pows[i]);
+            }
+            if (wid_fit_e < fabs(wid_fit - wids[i])){
+                wid_fit_e = fabs(wid_fit - wids[i]);
+            }
+            if (vel_fit_e < fabs(vel_fit - vels[i])){
+                vel_fit_e = fabs(vel_fit - vels[i]);
+            }
         }
     }
 
