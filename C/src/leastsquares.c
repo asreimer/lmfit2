@@ -133,7 +133,7 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
     double paramerrors[3];
 
     double nyquist_velocity = lambda/(4.0 * (double)(mpinc) * 1.e-6);
-    double v_step = (nyquist_velocity/2.0 - (-nyquist_velocity/2.0)) / ((double)(num_init_vel) - 1);  
+    double v_step = (nyquist_velocity/2.0 - (-nyquist_velocity/2.0)-1.0) / ((double)(num_init_vel) - 1);  
 
     double chi2s[num_init_vel];
     double pows[num_init_vel];
