@@ -33,7 +33,7 @@ void do_LMFIT(llist_node range,PHASETYPE *phasetype,FITPRMS *fitted_prms){
 	switch(*phasetype){
 		case ACF:
 		    /* Do exponential envelope fit */
-			lmfit_acf(range_node->l_acf_fit,range_node->acf,lambda,mpinc,1,0);
+			lmfit_acf(range_node->l_acf_fit,range_node->acf,lambda,mpinc,2,0);
 
             /* Do gaussian envelope fit */
 /*			lmfit_acf(range_node->q_acf_fit,range_node->acf,lambda,mpinc,1,1); */
