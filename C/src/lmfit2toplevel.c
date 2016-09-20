@@ -166,21 +166,26 @@ void Copy_Fitting_Prms(struct RadarSite *radar_site, struct RadarParm *radar_prm
         fit_prms->pwr0[i]=raw_data->pwr0[i];
     }
 
-    for (i=0;i<fit_prms->nrang;i++) {
-
-        for (j=0;j<fit_prms->mplgs;j++) {
-            fit_prms->acfd[i*fit_prms->mplgs+j][0]=raw_data->acfd[0][i*fit_prms->mplgs+j];
-            fit_prms->acfd[i*fit_prms->mplgs+j][1]=raw_data->acfd[1][i*fit_prms->mplgs+j];
+    if (raw_data->acfd != NULL){
+        for (i=0;i<fit_prms->nrang;i++) {
+            if (raw_data->acfd[0] != NULL){
+                for (j=0;j<fit_prms->mplgs;j++) {
+                    fit_prms->acfd[i*fit_prms->mplgs+j][0]=raw_data->acfd[0][i*fit_prms->mplgs+j];
+                    fit_prms->acfd[i*fit_prms->mplgs+j][1]=raw_data->acfd[1][i*fit_prms->mplgs+j];
+                }
+            }
+        } 
+    }
+    if (raw_data->xcfd != NULL){
+        for (i=0;i<fit_prms->nrang;i++) {
+            if (raw_data->xcfd[0] != NULL){
+                for (j=0;j<fit_prms->mplgs;j++) {
+                    fit_prms->xcfd[i*fit_prms->mplgs+j][0]=raw_data->xcfd[0][i*fit_prms->mplgs+j];
+                    fit_prms->xcfd[i*fit_prms->mplgs+j][1]=raw_data->xcfd[1][i*fit_prms->mplgs+j];
+                }
+            }
         }
-    } 
-
-    for (i=0;i<fit_prms->nrang;i++) {
-
-        for (j=0;j<fit_prms->mplgs;j++) {
-            fit_prms->xcfd[i*fit_prms->mplgs+j][0]=raw_data->xcfd[0][i*fit_prms->mplgs+j];
-            fit_prms->xcfd[i*fit_prms->mplgs+j][1]=raw_data->xcfd[1][i*fit_prms->mplgs+j];
-        }
-    } 
+    }
 }
 
 
