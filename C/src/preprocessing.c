@@ -671,11 +671,12 @@ void Check_Range_Nodes(llist ranges){
 				llist_delete_node(ranges,&range_node->range,TRUE,free_range_node);
 				status = 0;
 
-			}
-			else{
+			}else{
 				llist_delete_node(ranges,&range_node->range,TRUE,free_range_node);
 				status = llist_go_next(ranges);
 			}
+		}else{
+			status = llist_go_next(ranges);
 		}
 	}while(status != LLIST_END_OF_LIST);
 
