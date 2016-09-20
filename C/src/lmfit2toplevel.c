@@ -209,14 +209,13 @@ int LMFIT2(FITPRMS *fit_prms, struct FitData *fit_data) {
     /* This also calculates the initial sampling uncertainty error estimate for lag0 power */
     /* In here we set phase error to 1 for now. It will be updated after the power is fit */
 
+    /* Check to make sure we actually have data in range list, or else return */
     if (llist_size(ranges) == 0) 
     {
         llist_destroy(lags,TRUE,free);
         llist_destroy(ranges,TRUE,free_range_node);
-        return -1; /* -1 means there was a problem with fitting due to no ranges with fitted lag0pwr > noise */
+        return -1; /* -1 means there was a problem with fitting due to no range data*/
     }
-
-    
 
     /*llist_for_each_arg(ranges,(node_func_arg)Fill_Data_Lists_For_Range,lags,fit_prms)*/
 
