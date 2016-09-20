@@ -57,6 +57,7 @@ bool Is_Converged(llist *ranges,double tol);
 void Estimate_Self_Clutter(llist *ranges,FITPRMS *fit_prms);
 void Estimate_First_Order_Error(llist *ranges,FITPRMS *fit_prms, double noise_pwr);
 void Estimate_Re_Im_Error(llist *ranges,FITPRMS *fit_prms, double noise_pwr);
+void Check_Range_Nodes(llist ranges);
 
 
 #endif

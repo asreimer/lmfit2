@@ -656,6 +656,21 @@ void Fill_Data_Lists_For_Range(llist_node range,llist lags,FITPRMS *fit_prms){
 	}
 }
 
+/* Check to see if lists have any data in them, if not, delete the range node */
+void Check_Range_Nodes(llist ranges){
+    RANGENODE* range_node;
+
+
+    llist_reset_iter(ranges);
+	do
+	{
+		llist_get_iter(ranges,(void**)&range_node);
+		if (llist_size(range_node->pwrs) == 0) {
+			llist_delete_node(ranges,&range_node->range,TRUE,free_range_node);
+		}
+	}while(llist_go_next(ranges) != LLIST_END_OF_LIST);
+		
+}
 
 /**
 This function determines the minimum power level for which an ACF is pure

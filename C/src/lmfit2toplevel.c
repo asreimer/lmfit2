@@ -208,11 +208,26 @@ int LMFIT2(FITPRMS *fit_prms, struct FitData *fit_data) {
     /* And then we fill the lists with data from the rawacf structure */
     /* This also calculates the initial sampling uncertainty error estimate for lag0 power */
     /* In here we set phase error to 1 for now. It will be updated after the power is fit */
+
+    if (llist_size(ranges) == 0) 
+    {
+        llist_destroy(lags,TRUE,free);
+        llist_destroy(ranges,TRUE,free_range_node);
+        return -1; /* -1 means there was a problem with fitting due to no ranges with fitted lag0pwr > noise */
+    }
+
+    
+
+    /*llist_for_each_arg(ranges,(node_func_arg)Fill_Data_Lists_For_Range,lags,fit_prms)*/
+
     llist_for_each_arg(ranges,(node_func_arg)Fill_Data_Lists_For_Range,lags,fit_prms);
 
     /* Tx overlapped data is removed from consideration */
     /* Ain't nobody got time for that */
     Filter_TX_Overlap(ranges, lags, fit_prms); /*Comment this out for simulted data without TX overlap*/ 
+
+    /* Check to see if data lists have any data in them, if not, delete the range node */
+    Check_Range_Nodes(ranges);
 
     /* With fitted lag0 power, we can now get a rough estimate of the error in magnitude */
     /* First, estimate the self-clutter */
