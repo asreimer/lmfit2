@@ -2,7 +2,8 @@
 Fitted SuperDARN data with accurate error bars. Filter data based on fitted error:
 
 
-![alt text](https://raw.githubusercontent.com/asreimer/lmfit2/feature-testing/example/animated.gif)
+![alt text](example/animated.gif)
+
 Pictured above is 8 hours of fitted velocity data for the Saskatoon SuperDARN radar for none, 800 m/s, 400 m/s, 200 m/s, 100 m/s, and 50 m/s velocity error thresholds.
 
 # Summary
