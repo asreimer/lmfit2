@@ -55,7 +55,7 @@ TESTING_SRC = $(shell echo testing/*.c)
 TESTING_OBJ = $(TESTING_SRC:.c=.o)
 
 testing: $(TESTING_OBJ)
-		$(CC) $(CFLAGS) $(INLUDES) -o $(TESTING) $(TESTING_OBJ) $(LIBS)
+		$(CC) $(CFLAGS) -o $(TESTING) $(TESTING_OBJ) $(LIBS)
 
 ######### MAKE_FIT #########
 MAKEFIT = make_lmfit2
@@ -73,7 +73,7 @@ MFLAGS = -L$(LIBDIR) -L$(LIBPATH)
 MK_LIBS =  $(MFLAGS) $(MK_STATIC_LFLAGS) $(MK_DYNAMIC_LFLAGS)
 
 make_lmfit2: $(MAKEFIT_OBJ)
-		     $(CC) $(CFLAGS) $(INLUDES) -o $(MAKEFIT) $(MAKEFIT_OBJ) $(MK_LIBS)
+		     $(CC) $(CFLAGS) -o $(MAKEFIT) $(MAKEFIT_OBJ) $(MK_LIBS)
 		     mkdir -p $(BINDIR)
 		     mv $(MAKEFIT) $(BINDIR)
 
