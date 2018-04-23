@@ -1,6 +1,6 @@
-The test.rawacf file was made by taking the first 144844 bytes of the "20120614.0401.00.sas.rawacf" file using the command:
+The test.rawacf file was made by taking the first 144845 bytes of the "20120614.0401.00.sas.rawacf" file using the command:
 
-head -c 144844 20120614.0401.00.sas.rawacf > test.rawacf
+head -c 144845 20120614.0401.00.sas.rawacf > test.rawacf
 
 This corresponds to 4 rawacf records.
 
