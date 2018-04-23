@@ -435,7 +435,6 @@ def lmfit2(record):
 
     #next, iterate through all range gates and do fitting
     for gate in ranges:
-        print gate
         re = [x[0] for x in acfd[gate]]
         im = [x[1] for x in acfd[gate]]
         time = list(t)
@@ -542,7 +541,8 @@ def lmfit2(record):
         fitted_width_e.append(wid_e)
         fitted_vels_e.append(vel_e)
 
-    print "It took "+str((datetime.now()-now).total_seconds())+" to fit one beam."
+    time_diff = (datetime.now()-now).total_seconds()
+    print("It took %s seconds to fit one beam." % str(time_diff))
 
     #set ground scatter flags
     gflg = list()
@@ -617,7 +617,6 @@ def main(input_filename, output_filename):
         fit_record = lmfit2(record)
         if isinstance(fit_record,dict):
             fitted_records.append(fit_record)
-        break
 
     #finally, write the fitted records to a dmap file
     write_file(output_filename, fitted_records)
@@ -627,14 +626,14 @@ def lmfit2_mp(pos,record):
     return pos,lmfit2(record)
 
 
+# Code to run a test!
 if __name__ == '__main__':
     import multiprocessing as mp
 
-    import numpy as np
-    pool = mp.Pool(10)
+    pool = mp.Pool(2)
 
-    input_filename = '20160303.1600.00.rkn.rawacf'
-    output_filename = '20160303.1600.00.rkn.lmfit2'
+    input_filename = 'tests/test.rawacf'
+    output_filename = 'tests/output.lmfit2'
 
     fitted_records = list()
 
