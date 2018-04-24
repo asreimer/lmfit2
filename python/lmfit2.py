@@ -477,12 +477,7 @@ def lmfit2(record):
             outs.append(minner.minimize())
 
         chi2 = np.array([out.chisqr for out in outs])
-        ind = np.where(chi2 == np.min(chi2))[0]
-
-        if (ind.size != 1):
-            print "SOMETHING WEIRD IS HAPPENING"
-        else:
-            ind = ind[0]
+        ind = np.where(chi2 == np.min(chi2))[0][0]
 
         pwr_fit = outs[ind].params['power'].value
         wid_fit = outs[ind].params['width'].value
@@ -515,12 +510,7 @@ def lmfit2(record):
             outs2.append(minner.minimize())
 
         chi2 = np.array([out.chisqr for out in outs2])
-        ind = np.where(chi2 == np.min(chi2))[0]
-
-        if (ind.size != 1):
-            print "SOMETHING WEIRD IS HAPPENING"
-        else:
-            ind = ind[0]
+        ind = np.where(chi2 == np.min(chi2))[0][0]
 
         pwr_fit = outs2[ind].params['power'].value
         wid_fit = outs2[ind].params['width'].value
