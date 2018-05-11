@@ -435,6 +435,7 @@ def lmfit2(record):
 
     #next, iterate through all range gates and do fitting
     for gate in ranges:
+        print("Beam: %s  Range Gate: %s" % (str(record['bmnum']),str(gate)))
         re = [x[0] for x in acfd[gate]]
         im = [x[1] for x in acfd[gate]]
         time = list(t)
@@ -469,7 +470,7 @@ def lmfit2(record):
 
         for vel in init_vels:
             params = Parameters()
-            params.add('power', value=lag0_power[gate])
+            params.add('power', value=lag0_power[gate],min=0)
             params.add('width', value=200.0,min=-100) #Need minimum, to stop magnitude model from diverging to infinity
             params.add('velocity', value=vel, min=-nyquist_velocity/2., max=nyquist_velocity/2.)
 
@@ -486,13 +487,14 @@ def lmfit2(record):
         #Now get proper errorbars using fitted parameters and model
         acf_model = pwr_fit*np.exp(-time*2.*np.pi*wid_fit/lamda)*np.exp(1j*4.*np.pi*vel_fit*time/lamda)
         mag_model = np.abs(acf_model)
-        rho_re = np.cos(4.*np.pi*vel_fit*time/lamda)
-        rho_im = np.sin(4.*np.pi*vel_fit*time/lamda)
         rho = mag_model/mag_model[0]
         for i in range(len(rho)):
             if (rho[i] > 0.999):
                 rho[i] = 0.999
             rho[i] = rho[i] * pwr_fit / (pwr_fit + noise + clutter[i])
+
+        rho_re = rho*np.cos(4.*np.pi*vel_fit*time/lamda)
+        rho_im = rho*np.sin(4.*np.pi*vel_fit*time/lamda)
 
         re_error = acf_error(pwr_fit,noise,clutter,nave,rho,rho_re)
         im_error = acf_error(pwr_fit,noise,clutter,nave,rho,rho_im)
@@ -502,7 +504,7 @@ def lmfit2(record):
 
         for vel in init_vels:
             params = Parameters()
-            params.add('power', value=pwr_fit)
+            params.add('power', value=pwr_fit,min=0)
             params.add('width', value=wid_fit,min=-100)
             params.add('velocity', value=vel, min=-nyquist_velocity/2., max=nyquist_velocity/2.)
 
@@ -603,7 +605,8 @@ def main(input_filename, output_filename):
     records = read_file(input_filename)
 
     #next iterate through all records and fit them
-    for record in records:
+    for i,record in enumerate(records):
+        print('Processing Record: %s' % str(i))
         fit_record = lmfit2(record)
         if isinstance(fit_record,dict):
             fitted_records.append(fit_record)
