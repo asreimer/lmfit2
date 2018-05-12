@@ -1,4 +1,6 @@
 ## Levenburg-Marquardt fitting of SuperDARN auto-correlation functions (ACFs). **With NO ad hoc assumptions/conditions!**
+[As described by Reimer et. al. (2018)](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1002/2017RS006450/full).
+
 Fitted SuperDARN data with accurate error bars. Filter data based on fitted error:
 
 
