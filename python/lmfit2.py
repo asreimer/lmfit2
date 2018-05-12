@@ -435,7 +435,7 @@ def lmfit2(record):
 
     #next, iterate through all range gates and do fitting
     for gate in ranges:
-        print gate
+        print("Beam: %s  Range Gate: %s" % (str(record['bmnum']),str(gate)))
         re = [x[0] for x in acfd[gate]]
         im = [x[1] for x in acfd[gate]]
         time = list(t)
@@ -470,7 +470,7 @@ def lmfit2(record):
 
         for vel in init_vels:
             params = Parameters()
-            params.add('power', value=lag0_power[gate])
+            params.add('power', value=lag0_power[gate],min=0)
             params.add('width', value=200.0,min=-100) #Need minimum, to stop magnitude model from diverging to infinity
             params.add('velocity', value=vel, min=-nyquist_velocity/2., max=nyquist_velocity/2.)
 
@@ -478,12 +478,7 @@ def lmfit2(record):
             outs.append(minner.minimize())
 
         chi2 = np.array([out.chisqr for out in outs])
-        ind = np.where(chi2 == np.min(chi2))[0]
-
-        if (ind.size != 1):
-            print "SOMETHING WEIRD IS HAPPENING"
-        else:
-            ind = ind[0]
+        ind = np.where(chi2 == np.min(chi2))[0][0]
 
         pwr_fit = outs[ind].params['power'].value
         wid_fit = outs[ind].params['width'].value
@@ -492,13 +487,14 @@ def lmfit2(record):
         #Now get proper errorbars using fitted parameters and model
         acf_model = pwr_fit*np.exp(-time*2.*np.pi*wid_fit/lamda)*np.exp(1j*4.*np.pi*vel_fit*time/lamda)
         mag_model = np.abs(acf_model)
-        rho_re = np.cos(4.*np.pi*vel_fit*time/lamda)
-        rho_im = np.sin(4.*np.pi*vel_fit*time/lamda)
         rho = mag_model/mag_model[0]
         for i in range(len(rho)):
             if (rho[i] > 0.999):
                 rho[i] = 0.999
             rho[i] = rho[i] * pwr_fit / (pwr_fit + noise + clutter[i])
+
+        rho_re = rho*np.cos(4.*np.pi*vel_fit*time/lamda)
+        rho_im = rho*np.sin(4.*np.pi*vel_fit*time/lamda)
 
         re_error = acf_error(pwr_fit,noise,clutter,nave,rho,rho_re)
         im_error = acf_error(pwr_fit,noise,clutter,nave,rho,rho_im)
@@ -508,7 +504,7 @@ def lmfit2(record):
 
         for vel in init_vels:
             params = Parameters()
-            params.add('power', value=pwr_fit)
+            params.add('power', value=pwr_fit,min=0)
             params.add('width', value=wid_fit,min=-100)
             params.add('velocity', value=vel, min=-nyquist_velocity/2., max=nyquist_velocity/2.)
 
@@ -516,12 +512,7 @@ def lmfit2(record):
             outs2.append(minner.minimize())
 
         chi2 = np.array([out.chisqr for out in outs2])
-        ind = np.where(chi2 == np.min(chi2))[0]
-
-        if (ind.size != 1):
-            print "SOMETHING WEIRD IS HAPPENING"
-        else:
-            ind = ind[0]
+        ind = np.where(chi2 == np.min(chi2))[0][0]
 
         pwr_fit = outs2[ind].params['power'].value
         wid_fit = outs2[ind].params['width'].value
@@ -542,7 +533,8 @@ def lmfit2(record):
         fitted_width_e.append(wid_e)
         fitted_vels_e.append(vel_e)
 
-    print "It took "+str((datetime.now()-now).total_seconds())+" to fit one beam."
+    time_diff = (datetime.now()-now).total_seconds()
+    print("It took %s seconds to fit one beam." % str(time_diff))
 
     #set ground scatter flags
     gflg = list()
@@ -613,11 +605,11 @@ def main(input_filename, output_filename):
     records = read_file(input_filename)
 
     #next iterate through all records and fit them
-    for record in records:
+    for i,record in enumerate(records):
+        print('Processing Record: %s' % str(i))
         fit_record = lmfit2(record)
         if isinstance(fit_record,dict):
             fitted_records.append(fit_record)
-        break
 
     #finally, write the fitted records to a dmap file
     write_file(output_filename, fitted_records)
@@ -627,14 +619,14 @@ def lmfit2_mp(pos,record):
     return pos,lmfit2(record)
 
 
+# Code to run a test!
 if __name__ == '__main__':
     import multiprocessing as mp
 
-    import numpy as np
-    pool = mp.Pool(10)
+    pool = mp.Pool(2)
 
-    input_filename = '20160303.1600.00.rkn.rawacf'
-    output_filename = '20160303.1600.00.rkn.lmfit2'
+    input_filename = 'tests/test.rawacf'
+    output_filename = 'tests/output.lmfit2'
 
     fitted_records = list()
 
