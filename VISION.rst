@@ -1,0 +1,3 @@
+- No ad hoc or empirical data filtering. Only Tx blanked lags filtered.
+- Only rawacf fitting: no plotting, no filtering of fitted parameters.
+- Add improvements as SuperDARN radar capabilities improve (improved self-clutter estimation, etc.)

@@ -1,0 +1,1 @@
+The list of contributors can be found `on GitHub <https://github.com/asreimer/lmfit2/graphs/contributors>`_.
