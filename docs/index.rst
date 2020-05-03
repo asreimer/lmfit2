@@ -64,8 +64,6 @@ If you have a question about the use of lmfit2, please post it to the issue trac
 
 .. toctree::
    install
-   ussage
-
 
 License & Attribution
 ---------------------
