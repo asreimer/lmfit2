@@ -1,17 +1,17 @@
 lmfit2
 ======
 
-**lmfit2** is an GPLv3 licensed implementation of the First-Principles
+**lmfit2** is a GPLv3 licensed implementation of the First-Principles
 Fitting Methodology (FPFM) algorithm described in `Statistically Self‐Consistent
 and Accurate Errors for SuperDARN Data <https://doi.org/10.1002/2017RS006450>`_.
 This algorithm was specifically developed for fitting SuperDARN "rawacf" data,
-however the principles used to develop the algorithm are broadly applicable to
+but the principles used to develop the algorithm are broadly applicable to
 parameter extraction via fitting models to data. lmfit2 was written in two
-different languages, C and Python, but the C version is the recommended version
-to use. These pages will show you how to use lmfit2.
+different languages, C and Python. We recommend that you use the C version.
+These pages will show you how to use lmfit2.
 
 This documentation will not teach you much about how to fit data, but there are
-many good resources on this topic already available (try `numerical recipes
+many good resources on this topic already available (try `numerical recipes,
 <http://numerical.recipes/>`_ specifically the chapter on modeling data).
 We also `published a paper <https://doi.org/10.1002/2017RS006450>`_ explaining
 the FPFM algorithm and implementation in detail.

@@ -3,13 +3,13 @@
 Installation
 ============
 
-lmfit2 is availble in both C and in Python, with each having a different
+lmfit2 is availble in both C and Python, with each having a different
 installation procedure. The C version needs to be compiled against the
 `RST package <https://github.com/SuperDARN/rst>`_. The Python version is
-not a package, but instead a python script.
+not a package, but instead a script.
 
-The C version is the recommended version to be used. The Python version
-is only provided for testing purposes.
+We recommended that you use the C version. The Python version is only
+provided for testing purposes.
 
 
 C Version Installation
@@ -35,7 +35,7 @@ can copy the binary to an existing location on your path.
 Test the C binary
 -----------------
 
-To make sure that the installation went alright, you can execute a unit
+To make sure that the installation was successful, you can execute a unit
 test located in `${BASEPATH}/lmfit2/C/tests`:
 
 .. code-block:: bash
@@ -43,8 +43,8 @@ test located in `${BASEPATH}/lmfit2/C/tests`:
     cd ${BASEPATH}/lmfit2/C/tests
     bash test.bash
 
-This might take a minute, but you shouldn't end up with any errors if
-everything is working as it should.
+This might take a minute and should result in no errors if everything is
+working as it should.
 
 
 Python Version Installation
@@ -60,8 +60,7 @@ using `pip`, like so:
 
 The python version is not set up to be a python package, instead it is
 intened to be used as a script. To "install" it, simply copy both the
-`lmfit2.py` and `dmap.py` python files to whereever you want to them to be
-to use them.
+`lmfit2.py` and `dmap.py` python files to wherever you want to them to be.
 
 
 Test the Python Code
@@ -75,5 +74,5 @@ Assuming that you have grabbed the source code for lmfit2 using `git`
 
     python tests/test.py
 
-This will take a minute or two. It shouldn't return any errors if everything
-is set up properly.
+This will take a minute or two and should result in no errors if everything is
+working as it should.
