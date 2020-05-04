@@ -32,27 +32,27 @@ struct vars_struct {
 Returns a pointer to a new FITDATA structure
 */
 LMFITDATA *new_lmfit_data(){
-	LMFITDATA *new_lmfit_data;
+    LMFITDATA *new_lmfit_data;
 
-	new_lmfit_data = malloc(sizeof(*new_lmfit_data));
-	new_lmfit_data->P = 0.0;
-	new_lmfit_data->wid = 0.0;
-	new_lmfit_data->vel = 0.0;
-	new_lmfit_data->phi0 = 0.0;
-	new_lmfit_data->sigma_2_P = 0.0;
-	new_lmfit_data->sigma_2_wid = 0.0;
-	new_lmfit_data->sigma_2_vel = 0.0;
-	new_lmfit_data->sigma_2_phi0 = 0.0;
-	new_lmfit_data->chi_2 = 0.0;
+    new_lmfit_data = malloc(sizeof(*new_lmfit_data));
+    new_lmfit_data->P = 0.0;
+    new_lmfit_data->wid = 0.0;
+    new_lmfit_data->vel = 0.0;
+    new_lmfit_data->phi0 = 0.0;
+    new_lmfit_data->sigma_2_P = 0.0;
+    new_lmfit_data->sigma_2_wid = 0.0;
+    new_lmfit_data->sigma_2_vel = 0.0;
+    new_lmfit_data->sigma_2_phi0 = 0.0;
+    new_lmfit_data->chi_2 = 0.0;
 
-	return new_lmfit_data;
+    return new_lmfit_data;
 }
 
 
 void free_lmfit_data(LMFITDATA *lmfit_data){
-	if(lmfit_data != NULL){
-		free(lmfit_data);
-	}
+    if(lmfit_data != NULL){
+        free(lmfit_data);
+    }
 }
 
 
@@ -60,15 +60,15 @@ void free_lmfit_data(LMFITDATA *lmfit_data){
 prints the contents of a LMFITDATA structure
 */
 void print_lmfit_data(LMFITDATA *fit_data, FILE* fp){
-	fprintf(fp,"P: %e\n",fit_data->P);
-	fprintf(fp,"wid: %e\n",fit_data->wid);
-	fprintf(fp,"vel: %e\n",fit_data->vel);
-	fprintf(fp,"phi0: %e\n",fit_data->phi0);
-	fprintf(fp,"sigma_2_P: %e\n",fit_data->sigma_2_P);
-	fprintf(fp,"sigma_2_wid: %e\n",fit_data->sigma_2_wid);
-	fprintf(fp,"sigma_2_vel: %e\n",fit_data->sigma_2_vel);
-	fprintf(fp,"sigma_2_phi0: %e\n",fit_data->sigma_2_phi0);
-	fprintf(fp,"chi_2: %f\n",fit_data->chi_2);
+    fprintf(fp,"P: %e\n",fit_data->P);
+    fprintf(fp,"wid: %e\n",fit_data->wid);
+    fprintf(fp,"vel: %e\n",fit_data->vel);
+    fprintf(fp,"phi0: %e\n",fit_data->phi0);
+    fprintf(fp,"sigma_2_P: %e\n",fit_data->sigma_2_P);
+    fprintf(fp,"sigma_2_wid: %e\n",fit_data->sigma_2_wid);
+    fprintf(fp,"sigma_2_vel: %e\n",fit_data->sigma_2_vel);
+    fprintf(fp,"sigma_2_phi0: %e\n",fit_data->sigma_2_phi0);
+    fprintf(fp,"chi_2: %f\n",fit_data->chi_2);
 }
 
 
@@ -77,7 +77,7 @@ int exp_acf_model(int m, int n, double *params, double *deviates, double **deriv
 {
 
     int i;
-    double t,P,wid,vel,sigma,acf_data,lambda;
+    double t,P,wid,vel,sigma,acf_data,lambda,exponential,cosine,sine;
     struct vars_struct *v = (struct vars_struct *) private;
     double *x, *y, *ey;
 
@@ -100,11 +100,30 @@ int exp_acf_model(int m, int n, double *params, double *deviates, double **deriv
         acf_data = y[i];
         sigma = ey[i];
 
-		if(i < m/2)
-			deviates[i] = (acf_data - P*exp(-2.0*M_PI*wid*t/lambda)*cos(4*M_PI*vel*t/lambda))/sigma;
-		else
-			deviates[i] = (acf_data - P*exp(-2.0*M_PI*wid*t/lambda)*sin(4*M_PI*vel*t/lambda))/sigma;
+        /* separate out the factors in the model because these
+        factors are common to the deviates and the derivatives */
+        exponential = exp(-2.0*M_PI*wid*t/lambda);
+        cosine = cos(4*M_PI*vel*t/lambda);
+        sine = sin(4*M_PI*vel*t/lambda);
+
+        if(i < m/2)
+        {
+            deviates[i] = (acf_data - P*exponential*cosine)/sigma; /* (data - f_r)/sigma */
+            if (derivs) {
+                derivs[0][i] = -1*exponential*cosine/sigma;  /* -d(f_r)/dP */
+                derivs[1][i] = -1*(-2.0*M_PI*t/lambda) * P*exponential*cosine/sigma; /* -d(f_r)/dwid */
+                derivs[2][i] = (4*M_PI*t/lambda) * P*exponential*sine/sigma; /* -d(f_r)/dvel */
+            }
+        } else {
+            deviates[i] = (acf_data - P*exponential*sine)/sigma; /* (data - f_i)/sigma */
+            if (derivs) {
+                derivs[0][i] = -1*exponential*sine/sigma;  /* -d(f_i)/dP */
+                derivs[1][i] = -1*(-2.0*M_PI*t/lambda) * P*exponential*sine/sigma; /* -d(f_i)/dwid */
+                derivs[2][i] = -1*(4*M_PI*t/lambda) * P*exponential*cosine/sigma; /* -d(f_i)/dvel */
+            }
+        }
     }
+
     return 0;
 }
 
@@ -179,15 +198,21 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
     /*limit values to prevent fit from going to +- inf and breaking*/
     params_info[0].limited[0] = 1;
     params_info[0].limits[0]  = 0;
+    params_info[0].side = 3;
+    params_info[0].deriv_debug = 0;
       
     params_info[1].limited[0] = 1;
     params_info[1].limits[0]  = -100.0;
     params_info[1].limited[1] = 0;
+    params_info[1].side = 3;
+    params_info[1].deriv_debug = 0;
 
     params_info[2].limited[0] = 1;
     params_info[2].limits[0]  = -nyquist_velocity/2.;
     params_info[2].limited[1] = 1;
     params_info[2].limits[1]  = nyquist_velocity/2.;
+    params_info[2].side = 3;
+    params_info[2].deriv_debug = 0;
 
     /* CONFIGURE LMFIT */
     config.maxiter = 2000;
