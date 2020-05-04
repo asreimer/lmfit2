@@ -20,9 +20,9 @@ lmfit2 fitted data was used `in a study identifying ULF waves in SuperDARN data
 <https://doi.org/10.1029/2018JA025859>`_ and it is being developed on `GitHub
 <https://github.com/asreimer/lmfit2>`_.
 
-.. image:: https://img.shields.io/badge/GitHub-asreimer%2Flmfit2-blue.svg?style=flat
+.. image:: https://img.shields.io/badge/GitHub-asreimer%2Flmfit2-blue.svg
     :target: https://github.com/asreimer/lmfit2
-.. image:: https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat
+.. image:: https://img.shields.io/badge/License-GPLv3-blue.svg
     :target: https://github.com/asreimer/lmfit2/blob/master/LICENSE
 
 
