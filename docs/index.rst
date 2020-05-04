@@ -3,7 +3,7 @@ lmfit2
 
 **lmfit2** is an GPLv3 licensed implementation of the First-Principles
 Fitting Methodology (FPFM) algorithm described in `Statistically Self‐Consistent
-and Accurate Errors for SuperDARN Data<https://doi.org/10.1002/2017RS006450>`_.
+and Accurate Errors for SuperDARN Data <https://doi.org/10.1002/2017RS006450>`_.
 This algorithm was specifically developed for fitting SuperDARN "rawacf" data,
 however the principles used to develop the algorithm are broadly applicable to
 parameter extraction via fitting models to data. lmfit2 was written in two
@@ -17,7 +17,7 @@ We also `published a paper <https://doi.org/10.1002/2017RS006450>`_ explaining
 the FPFM algorithm and implementation in detail.
 
 lmfit2 fitted data was used `in a study identifying ULF waves in SuperDARN data
-<https://doi.org/10.1029/2018JA025859>` and it is being developed on `GitHub
+<https://doi.org/10.1029/2018JA025859>`_ and it is being developed on `GitHub
 <https://github.com/asreimer/lmfit2>`_.
 
 .. image:: https://img.shields.io/badge/GitHub-asreimer%2Flmfit2-blue.svg?style=flat
@@ -63,6 +63,8 @@ If you have a question about the use of lmfit2, please post it to the issue trac
 
 
 .. toctree::
+   :caption: Installation Guide
+
    install
 
 License & Attribution

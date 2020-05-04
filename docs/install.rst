@@ -39,6 +39,7 @@ To make sure that the installation went alright, you can execute a unit
 test located in `${BASEPATH}/lmfit2/C/tests`:
 
 .. code-block:: bash
+
     cd ${BASEPATH}/lmfit2/C/tests
     bash test.bash
 
@@ -53,6 +54,7 @@ The python version depends on the `lmfit` python library. You can install it
 using `pip`, like so:
 
 .. code-block:: bash
+
     pip install lmfit
 
 
@@ -70,6 +72,7 @@ Assuming that you have grabbed the source code for lmfit2 using `git`
 `lmfit2/python` directory and run:
 
 .. code-block:: bash
+
     python tests/test.py
 
 This will take a minute or two. It shouldn't return any errors if everything
