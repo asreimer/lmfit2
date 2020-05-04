@@ -96,6 +96,7 @@ int exp_acf_model(int m, int n, double *params, double *deviates, double **deriv
     /* Half of the data array is real component, other half is imaginary component */
     for (i=0; i<m; i++)
     {
+
         t = x[i];
         acf_data = y[i];
         sigma = ey[i];
@@ -105,7 +106,6 @@ int exp_acf_model(int m, int n, double *params, double *deviates, double **deriv
         exponential = exp(-2.0*M_PI*wid*t/lambda);
         cosine = cos(4*M_PI*vel*t/lambda);
         sine = sin(4*M_PI*vel*t/lambda);
-
         if(i < m/2)
         {
             deviates[i] = (acf_data - P*exponential*cosine)/sigma; /* (data - f_r)/sigma */
@@ -215,7 +215,8 @@ void lmfit_acf(LMFITDATA *fit_data,llist data, double lambda, int mpinc, int con
     params_info[2].deriv_debug = 0;
 
     /* CONFIGURE LMFIT */
-    config.maxiter = 2000;
+    config.maxiter = 200;
+    config.maxfev = 200;
     config.ftol = .0001;
     config.gtol = .0001;
     config.nofinitecheck=0;
